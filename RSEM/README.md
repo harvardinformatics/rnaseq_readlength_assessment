@@ -13,4 +13,5 @@ where "<samplename>" indicates an outfile name, that is a concatenation of the s
 
     rsem-calculate-expression --bowtie2 -p 16 --fragment-length-mean 300 --fragment-length-sd 60 R1.fastq /PATH/TO/Drosophila.melanogaster.BDGP6.dna.sm.toplevel <samplename>
 
- 
+## Differential expression with limma (voom)
+For our truth set 2x125 paired end reads, as well our evaluated strategies (2x40,1x75,1x125), we carried out pairwise Wald tests of differential expression using limma voom. We created separate expression matrices for RSEM outputs at the transcript and gene levels using the RSEM <em>rsem-generate-data-matrix</em> tool. Then, depending upon the pairwise analysis we conducted, we subsetted this matrix to generate the appropriate design matrix. As with sleuth-based differential expression analyses, we do not provide here our python code for generating R scripts, as they depend upon the naming convention one uses in prior pipeline steps. The arguments passed to execute limma analyses are identical between gene and transcript levels, only varying in which expression matrix one uses. Thus we provide one generic example script. 
