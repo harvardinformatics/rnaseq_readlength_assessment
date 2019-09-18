@@ -1,0 +1,2 @@
+# Assessing sequencing strategy effects on expression estimator performance
+This repository accompanies our draft manuscript "Short paired-end reads trump long single-end reads for expression analysis", which summarizes our findings concerning the robustness of gene and isoform-level expression estimates and downstream differential expression results generated with alternative RNA-seq sequencing strategies. The primary focus of this work was to determine whether short paired-end sequencing outperforms single-end sequencing  
