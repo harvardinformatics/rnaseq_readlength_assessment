@@ -12,4 +12,5 @@ Where the -b flag specifies the number of bootstraps (which are required for dow
 
     kallisto quant -i /PATH/TO/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.transcripts.idx --single --fragment-length=300 --sd=60 -b 100 -t 6 -o <SAMPLENAME>_quant /PATH/TO/R1.fastq
 
- 
+## Gene-level inference
+In order to generate gene-level expression estimates from kallisto transcript-level ones, for each gene, one must sum abundances from the constituent transcripts. We do this by first creating a tab-separated file that maps transcripts to genes, with "target_id", and "GENEID" as column names. We then use the R package [tximport](https://bioconductor.org/packages/release/bioc/html/tximport.html) to perform the aggegation. A generic example R script to do this is in the Rscripts directory. 
