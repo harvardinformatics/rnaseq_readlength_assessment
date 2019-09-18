@@ -1,0 +1,16 @@
+rsem_data<-read.table("SRP096374_rsem_genes_counts.matrix",header=TRUE,row.names=1)
+s2c<-read.table("SRP096374_sampleinfo.tab",header=TRUE,stringsAsFactors=FALSE)
+s2c<-subset(s2c,s2c$readlength=="40" & s2c$strategy=="pe" & s2c$condition %in% c("WT","TS"))
+count_matrix<-as.matrix(as.data.frame(rsem_data %>% select(TS_rep1_40,TS_rep2_40,TS_rep3_40,WT_rep1_40,WT_rep2_40,WT_rep3_40)))
+count_matrix<-round(count_matrix)
+filter=rowSums(cpm(count_matrix)>=1)>=2
+cpm_filtered_matrix<-count_matrix[filter,]
+DGE<-DGEList(cpm_filtered_matrix)
+DGE<-calcNormFactors(DGE,method =c("TMM"))
+design_matrix<-model.matrix(~condition,data=s2c)
+vwts <- voomWithQualityWeights(DGE, design=design_matrix,normalization="none", plot=FALSE)
+fit=lmFit(vwts,design_matrix)
+fit=eBayes(fit,robust=TRUE)
+results_table<-topTable(fit, adjust="BH",coef=colnames(fit$lods)[2], p.value=1, number=Inf ,resort.by="P")
+results_table$target_id<-row.names(results_table)
+write.table(results_table,"SRP096374_pe_40_WT_vs_TS.Wald.tsv",row.names=FALSE,quote=FALSE)
