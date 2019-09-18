@@ -1,0 +1,16 @@
+library(sleuth)
+library(dplyr)
+setwd("/PATH/TO/KALLISTO/QUANT/DIRS/ERP017328/ERP017328")
+ttg<-read.table("PATH/TO/sleuth_dme_ts.gene.map", header=TRUE)
+s2c<-read.table("ERP017328_sampleinfo.tab",header=TRUE,stringsAsFactors=FALSE)
+kal_dirs<-file.path("PATH/TO/KALLISTO/QUANT/DIRS/ERP017328",s2c$sample)
+s2c <- mutate(s2c, path = kal_dirs)
+s2c<-subset(s2c,s2c$strategy=="2x125" & s2c$condition %in% c("Mut","NC"))
+so <- sleuth_prep(s2c, extra_bootstrap_summary = TRUE,read_bootstrap_tpm = TRUE,target_mapping = ttg,aggregation_column = "GENEID")
+so <- sleuth_fit(so, ~condition, 'full')
+coefficient<-row.names(as.data.frame(so$fits$full$beta_covars[1]))[2]
+so<-sleuth_wt(so,coefficient)
+sleuth_table<-sleuth_results(so,coefficient)
+coeffcol<-rep(coefficient,length(sleuth_table$target_id))
+sleuth_table$coeff<-coeffcol
+write.table(sleuth_table,"ERP017328_2x125_MutvsNC_sleuthwald_genelevel.tsv",quote=FALSE)
