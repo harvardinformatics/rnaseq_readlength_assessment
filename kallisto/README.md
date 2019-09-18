@@ -10,6 +10,6 @@ Expression was then estimated for each sample. An example, genetic command line 
 
 Where the -b flag specifies the number of bootstraps (which are required for downstream DE analysis with sleuth), and -t indicated the number of threads. For single-end inference, one must specify the mean and standard deviation of the library fragment size. In our study, we use the paired-end 2x125 reads from each sample as our "truth", and obtain library size distribution information from the kallisto output for our truth set. In doing so, we round up to the nearest 50bp, given that, normally with single-end analysis, the true library size distribution is unknown. An example single-end command line is as follows:
 
-    kallisto quant -i /PATH/TO/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.transcripts.idx --single --fragment-length=300 --sd=60 -b 100 -t 6 /PATH/TO/R1.fastq
+    kallisto quant -i /PATH/TO/Drosophila_melanogaster.BDGP6.dna_sm.toplevel.transcripts.idx --single --fragment-length=300 --sd=60 -b 100 -t 6 -o <SAMPLENAME>_quant /PATH/TO/R1.fastq
 
  
