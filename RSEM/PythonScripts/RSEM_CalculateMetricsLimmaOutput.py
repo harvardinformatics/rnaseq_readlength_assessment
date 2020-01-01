@@ -59,14 +59,19 @@ if __name__=="__main__":
     parser.add_argument('-g','--gene',dest='gene',action='store_true',help='specifies "gene" in output file for gene level data')
     opts = parser.parse_args()
 
-    condition_pairs = Set('_'.join(i.replace('.Wald.tsv','').split('_')[3:]) for i in glob.glob('%s*Wald.tsv' % opts.sra))
+    condition_pairs = Set('_'.join(i.replace('.Wald.tsv','').replace('gene_','').replace('isoform_','').split('_')[3:]) for i in glob.glob('*%s*Wald.tsv' % opts.sra))
+    print 'condition pairs =', condition_pairs
     if opts.gene == True:
         fout = open('%s_limma_waldgene_summary_fdr%s.tsv' % (opts.sra,opts.fdr),'w')
     else:
         fout = open('%s_limma_waldisoform_summary_fdr%s.tsv' % (opts.sra,opts.fdr),'w')
     fout.write('accession\tcondition_pair\tstrategy\tfp\tfn\tsensitivity\tspecificity\tprecision\tfdr\n')
     for condition_pair in condition_pairs:
-        walds = glob.glob('%s*%s.Wald.tsv' % (opts.sra,condition_pair))
+        if opts.gene == True:
+            walds = glob.glob('gene_%s*%s.Wald.tsv' % (opts.sra,condition_pair))
+        else:
+            walds = glob.glob('isoform_%s*%s.Wald.tsv' % (opts.sra,condition_pair))
+        print 'walds',walds
         gold_standard = [i for i in walds if '_pe_125_' in i] 
         truth_dict = {}
         gold_open = open(gold_standard[0],'r')
