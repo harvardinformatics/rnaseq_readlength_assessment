@@ -48,8 +48,8 @@ def ParseWald(truth_dict,evalfile,fdr):
         linelist = line.strip().split()
         line_dict = dict(zip(fields,linelist))
         
-        if line_dict['qval'] == 'NA' and truth_dict[line_dict['target_id']] == 999:
-            pass # not expressed
+        if truth_dict[line_dict['target_id']] == 999:
+            pass 
         else:
             if line_dict['qval'] == 'NA':
                 line_dict['qval'] = 1
@@ -58,7 +58,7 @@ def ParseWald(truth_dict,evalfile,fdr):
                 ### response scores for auc calculations ###
                 response_dict[line_dict['target_id']] = 1 - float(line_dict['qval'])
 
-            ### performance metric tallies ###
+            ### performance metric tallying ###
             if truth_dict[line_dict['target_id']] > fdr and float(line_dict['qval']) > fdr:
                 true_negatives +=1
             elif truth_dict[line_dict['target_id']] <= fdr and float(line_dict['qval']) > fdr:
@@ -68,13 +68,15 @@ def ParseWald(truth_dict,evalfile,fdr):
             elif truth_dict[line_dict['target_id']] > fdr and float(line_dict['qval']) <= fdr:
                 false_positives +=1
             else:
-                print 'wtf'
+                raise Exception('invalid combination of fdr values')
+
     metric_dict = {}
     metric_dict['fp'] = false_positives/float(false_positives + true_negatives)
     metric_dict['fn'] = false_negatives/float(false_negatives + true_positives)
     metric_dict['sensitivity'] = true_positives/float(true_positives + false_negatives)
     metric_dict['specificity'] = true_negatives/float(true_negatives + false_positives)
     metric_dict['precision'] = true_positives/float(true_positives + false_positives) # aka ppv 
+    
     return metric_dict,response_dict
 
 
@@ -95,7 +97,7 @@ if __name__=="__main__":
     if opts.gene == True:
         fout = open('%s_kallisto_waldgene_summary_fdr%s.tsv' % (opts.sra,opts.fdr),'w')
     else:
-        out = open('%s_kallisto_waldtranscript_summary_fdr%s.tsv' % (opts.sra,opts.fdr),'w')
+        fout = open('%s_kallisto_waldtranscript_summary_fdr%s.tsv' % (opts.sra,opts.fdr),'w')
     fout.write('accession\tcondition_pair\tstrategy\tfp\tfn\tsensitivity\tspecificity\tprecision\tfdr\tauc\n')
     
     for condition_pair in condition_pairs:
